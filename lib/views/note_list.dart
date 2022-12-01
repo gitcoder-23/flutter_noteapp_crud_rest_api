@@ -133,6 +133,21 @@ class _NoteListState extends State<NoteList> {
                       noteTitle: notes[index].noteTitle ?? '',
                     ),
                   );
+                  if (result) {
+                    final deleteResult = await service()
+                        .deleteNote(notes[index].noteID.toString());
+                    String message;
+                    if (deleteResult.data == true) {
+                      message = 'Note has been deleted';
+                    } else {
+                      message = deleteResult.errorMessage ?? 'An error occured';
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(message),
+                        duration: const Duration(milliseconds: 1000)));
+
+                    return deleteResult.data ?? false;
+                  }
                   print('confirmDismiss $result');
                   return result;
                 },
@@ -159,13 +174,14 @@ class _NoteListState extends State<NoteList> {
                       : 'Last edited on ${formatDateTime(notes[index].latestEditDateTime!)}'),
                   onTap: () {
                     print('float Btn Press-->Edit Note');
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            NoteModify(noteID: notes[index].noteID ?? ''),
-                      ),
-                    );
-                    // .then((value) => _getAllNotes());
+                    Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                NoteModify(noteID: notes[index].noteID ?? ''),
+                          ),
+                        )
+                        .then((value) => _getAllNotes());
                   },
                 ),
               );

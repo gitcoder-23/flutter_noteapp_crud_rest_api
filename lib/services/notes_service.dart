@@ -133,9 +133,7 @@ class NotesService {
 
   Future<APIUpdateResponse<bool>> updateNote(
       String noteID, NoteManipulation item) {
-    print('noteID--->$noteID');
     var url = Uri.parse('$APIURL/notes/$noteID');
-    print('up-url->$url');
     return http
         .put(url, headers: headers, body: json.encode(item.toJson()))
         .then((data) {
@@ -168,6 +166,18 @@ class NotesService {
       // }
     }).catchError((_) => APIUpdateResponse<bool>(
             error: true, errorMessage: 'An error occured'));
+  }
+
+  // Delete Notes
+  Future<APIResponse<bool>> deleteNote(String noteID) {
+    var url = Uri.parse('$APIURL/notes/$noteID');
+    return http.delete(url, headers: headers).then((data) {
+      if (data.statusCode == 204) {
+        return APIResponse<bool>(data: true);
+      }
+      return APIResponse<bool>(error: true, errorMessage: 'An error occured');
+    }).catchError((_) =>
+        APIResponse<bool>(error: true, errorMessage: 'An error occured'));
   }
 
   //   List<NoteForListing> getNotesList() {
