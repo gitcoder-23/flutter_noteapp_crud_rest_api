@@ -157,6 +157,69 @@ class _NoteModifyState extends State<NoteModify> {
           ? (result.errorMessage ?? 'An error occurred')
           : '${result.createdNote} has been created';
 
+      // ignore: use_build_context_synchronously
+      showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+                title: const Text(title),
+                content: Text(text),
+                actions: <Widget>[
+                  ElevatedButton(
+                    child: const Text('Ok'),
+                    onPressed: () {
+                      if (result.error == true) {
+                        Navigator.pop(context, false);
+                      } else {
+                        Navigator.of(context).pop();
+                      }
+                    },
+                  )
+                ],
+              )).then((data) {
+        if (result.error == true) {
+          Navigator.pop(context, false);
+        } else {
+          Navigator.of(context).pop();
+        }
+      });
+    }
+  }
+
+  void editNote() async {
+    if (_titleController.text == '' || _contentController.text == '') {
+      late String aTitle = 'Alert';
+      late String aContent = 'Please fill all the fields';
+      showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+                title: Text(aTitle),
+                content: Text(aContent),
+                actions: <Widget>[
+                  ElevatedButton(
+                    child: const Text('Ok'),
+                    onPressed: () {
+                      Navigator.pop(context, false);
+                    },
+                  )
+                ],
+              ));
+    } else {
+      setState(() {
+        _isLoading = true;
+      });
+      final eNote = NoteManipulation(
+          noteTitle: _titleController.text,
+          noteContent: _contentController.text);
+      final result = await notesService.updateNote(mainNoteId, eNote);
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      const title = 'Done';
+      const text = 'Note has been updated';
+
+      // ignore: use_build_context_synchronously
       showDialog(
           context: context,
           builder: (_) => AlertDialog(
@@ -254,11 +317,11 @@ class _NoteModifyState extends State<NoteModify> {
                     width: double.infinity,
                     height: 35,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        print('Submit');
+                      onPressed: () {
                         if (isEditing) {
                           // Edit Ops
-                          Navigator.of(context).pop();
+                          editNote();
+                          // Navigator.of(context).pop();
                         } else {
                           // Add Ops
                           addNote();

@@ -1,5 +1,6 @@
 import 'package:flutter_crud_rest_api/models/note_insert.dart';
 import 'package:http/http.dart' as http;
+import 'dart:developer' as developer;
 import 'dart:convert';
 import 'package:flutter_crud_rest_api/models/api_response.dart';
 import 'package:flutter_crud_rest_api/models/note_for_listing.dart';
@@ -104,9 +105,8 @@ class NotesService {
         .post(url, headers: headers, body: json.encode(item.toJson()))
         .then((data) {
       final jsonData = json.decode(data.body);
-      print('createNote->$jsonData');
 
-      final createdNote = InsertNote(
+      final createdNote = NoteManipulate(
         noteID: jsonData['noteID'],
         noteTitle: jsonData['noteTitle'],
         noteContent: jsonData['noteContent'],
@@ -127,6 +127,47 @@ class NotesService {
       );
     }).catchError((_) =>
             APIResponse<bool>(error: true, errorMessage: 'An error occured'));
+  }
+
+  // Update Note {bool -> note creation was success or not}
+
+  Future<APIUpdateResponse<bool>> updateNote(
+      String noteID, NoteManipulation item) {
+    print('noteID--->$noteID');
+    var url = Uri.parse('$APIURL/notes/$noteID');
+    print('up-url->$url');
+    return http
+        .put(url, headers: headers, body: json.encode(item.toJson()))
+        .then((data) {
+      final jsonData = json.decode(data.body);
+      print('up-jsonData->$jsonData');
+      developer.log('updateNote-->', error: {jsonData});
+
+      if (data.statusCode == 204) {
+        return APIUpdateResponse<bool>(data: true);
+      } else {
+        return APIUpdateResponse<bool>(
+          error: true,
+          errorMessage: 'An error occured',
+        );
+      }
+
+      // final updatedNote = NoteManipulate(
+      //   noteID: jsonData['noteID'],
+      //   noteTitle: jsonData['noteTitle'],
+      //   noteContent: jsonData['noteContent'],
+      //   createDateTime: DateTime.parse(jsonData['createDateTime']),
+      //   latestEditDateTime: jsonData['latestEditDateTime'] != null
+      //       ? DateTime.parse(jsonData['latestEditDateTime'])
+      //       : null,
+      // );
+
+      // if (data.statusCode == 204) {
+      //   return APIUpdateResponse<bool>(
+      //       data: true, updatedNote: updatedNote.noteTitle);
+      // }
+    }).catchError((_) => APIUpdateResponse<bool>(
+            error: true, errorMessage: 'An error occured'));
   }
 
   //   List<NoteForListing> getNotesList() {

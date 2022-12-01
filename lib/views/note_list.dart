@@ -161,11 +161,11 @@ class _NoteListState extends State<NoteList> {
                     print('float Btn Press-->Edit Note');
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (_) => NoteModify(
-                          noteID: notes[index].noteID ?? '',
-                        ),
+                        builder: (_) =>
+                            NoteModify(noteID: notes[index].noteID ?? ''),
                       ),
                     );
+                    // .then((value) => _getAllNotes());
                   },
                 ),
               );

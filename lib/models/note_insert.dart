@@ -23,7 +23,7 @@ class NoteManipulation {
   // Map<String, dynamic> toJson() => _$NoteManipulationToJson(this);
 }
 
-class InsertNote {
+class NoteManipulate {
   String? noteID;
   String? noteTitle;
   String? noteContent;
@@ -31,7 +31,7 @@ class InsertNote {
   DateTime? latestEditDateTime;
 
 // constructor
-  InsertNote({
+  NoteManipulate({
     this.noteID,
     this.noteTitle,
     this.noteContent,
