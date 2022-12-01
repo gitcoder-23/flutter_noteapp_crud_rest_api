@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_crud_rest_api/views/note_delete.dart';
 import 'package:http/http.dart' as http;
@@ -45,6 +44,26 @@ class _NoteListState extends State<NoteList> {
   static const APIURL = 'https://tq-notes-api-jkrgrdggbq-el.a.run.app';
   static const headers = {'apiKey': '21d9dc11-dcd7-4dc7-b7a7-5009eb9b0e90'};
 
+  Future refresh() async {
+    // var url = Uri.parse('$APIURL/notes');
+    // var response = http.get(url, headers: headers).then((data) {
+    //   if (data.statusCode == 200) {
+    //     final jsonData = json.decode(data.body);
+    //     print('jsonData-get-->$jsonData');
+
+    //     setState(() {
+    //       jsonData.map<String>((item) {
+    //         final number = item['noteID'];
+    //         return 'Item $number';
+    //       });
+    //     });
+    //   }
+    // }).catchError((onError) {
+    //   print('Refresh Error');
+    // });
+    _getAllNotes();
+  }
+
   void _getAllNotes() {
     var url = Uri.parse('$APIURL/notes');
 
@@ -56,7 +75,7 @@ class _NoteListState extends State<NoteList> {
         setState(() {
           _isLoading = false;
         });
-        // developer.log('notes-->', error: {data.body});
+
         final jsonData = json.decode(data.body);
 
         for (var item in jsonData) {
@@ -111,81 +130,84 @@ class _NoteListState extends State<NoteList> {
         } else if (error == true && errorMessage == 'An error occured') {
           return Center(child: Text(errorMessage));
         } else {
-          return ListView.separated(
-            separatorBuilder: (_, __) => const Divider(
-              height: 1,
-              color: Colors.green,
-            ),
-            itemCount: notes.length,
-            itemBuilder: (_, index) {
-              return Dismissible(
-                key: ValueKey(notes[index].noteID),
-                direction: DismissDirection.startToEnd,
-                onDismissed: (direction) {
-                  print('onDismissed');
-                },
-                confirmDismiss: (
-                  direction,
-                ) async {
-                  final result = await showDialog(
-                    context: context,
-                    builder: (_) => NoteDelete(
-                      noteTitle: notes[index].noteTitle ?? '',
-                    ),
-                  );
-                  if (result) {
-                    final deleteResult = await service()
-                        .deleteNote(notes[index].noteID.toString());
-                    String message;
-                    if (deleteResult.data == true) {
-                      message = 'Note has been deleted';
-                    } else {
-                      message = deleteResult.errorMessage ?? 'An error occured';
-                    }
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(message),
-                        duration: const Duration(milliseconds: 1000)));
-
-                    return deleteResult.data ?? false;
-                  }
-                  print('confirmDismiss $result');
-                  return result;
-                },
-                // for delete need background
-                background: Container(
-                  color: Colors.red,
-                  padding: const EdgeInsets.only(left: 16),
-                  child: const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Icon(
-                      Icons.delete,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                child: ListTile(
-                  title: Text(
-                    // 'Hi',
-                    notes[index].noteTitle ?? '',
-                    style: TextStyle(color: Theme.of(context).primaryColor),
-                  ),
-                  subtitle: Text(notes[index].latestEditDateTime == null
-                      ? 'Last edited on ${formatDateTime(notes[index].createDateTime!)}'
-                      : 'Last edited on ${formatDateTime(notes[index].latestEditDateTime!)}'),
-                  onTap: () {
-                    print('float Btn Press-->Edit Note');
-                    Navigator.of(context)
-                        .push(
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                NoteModify(noteID: notes[index].noteID ?? ''),
-                          ),
-                        )
-                        .then((value) => _getAllNotes());
+          return RefreshIndicator(
+            onRefresh: refresh,
+            child: ListView.separated(
+              separatorBuilder: (_, __) => const Divider(
+                height: 1,
+                color: Colors.green,
+              ),
+              itemCount: notes.length,
+              itemBuilder: (_, index) {
+                return Dismissible(
+                  key: ValueKey(notes[index].noteID),
+                  direction: DismissDirection.startToEnd,
+                  onDismissed: (direction) {
+                    print('onDismissed');
                   },
-                ),
-              );
-            },
+                  confirmDismiss: (
+                    direction,
+                  ) async {
+                    final result = await showDialog(
+                      context: context,
+                      builder: (_) => NoteDelete(
+                        noteTitle: notes[index].noteTitle ?? '',
+                      ),
+                    );
+                    if (result) {
+                      final deleteResult = await service()
+                          .deleteNote(notes[index].noteID.toString());
+                      String message;
+                      if (deleteResult.data == true) {
+                        message = 'Note has been deleted';
+                      } else {
+                        message =
+                            deleteResult.errorMessage ?? 'An error occured';
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(message),
+                          duration: const Duration(milliseconds: 1000)));
+
+                      return deleteResult.data ?? false;
+                    }
+                    print('confirmDismiss $result');
+                    return result;
+                  },
+                  // for delete need background
+                  background: Container(
+                    color: Colors.red,
+                    padding: const EdgeInsets.only(left: 16),
+                    child: const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  child: ListTile(
+                    title: Text(
+                      // 'Hi',
+                      notes[index].noteTitle ?? '',
+                      style: TextStyle(color: Theme.of(context).primaryColor),
+                    ),
+                    subtitle: Text(notes[index].latestEditDateTime == null
+                        ? 'Last edited on ${formatDateTime(notes[index].createDateTime!)}'
+                        : 'Last edited on ${formatDateTime(notes[index].latestEditDateTime!)}'),
+                    onTap: () {
+                      print('float Btn Press-->Edit Note');
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              NoteModify(noteID: notes[index].noteID ?? ''),
+                        ),
+                      );
+                      // .then((value) => _getAllNotes());
+                    },
+                  ),
+                );
+              },
+            ),
           );
         }
       }),
