@@ -37,3 +37,17 @@ https://codesearchonline.com/flutter-form-textfield-validation/
 https://www.topcoder.com/thrive/articles/form-validation-in-flutter
 
 https://www.fluttercampus.com/guide/91/how-to-validate-form-textfield-values-flutter/
+
+
+# Flutter Cleaner
+https://stackoverflow.com/questions/64443888/flutter-cocoapodss-specs-repository-is-too-out-of-date-to-satisfy-dependencies
+
+https://stackoverflow.com/questions/56055142/cocoapods-could-not-find-compatible-versions-for-pod-firebase-coreonly
+
+
+
+
+
+
+
+
