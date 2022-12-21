@@ -45,7 +45,8 @@ https://stackoverflow.com/questions/64443888/flutter-cocoapodss-specs-repository
 https://stackoverflow.com/questions/56055142/cocoapods-could-not-find-compatible-versions-for-pod-firebase-coreonly
 
 
-
+# Infinite loop fetch list
+https://www.kindacode.com/article/flutter-listview-pagination-load-more/
 
 
 
