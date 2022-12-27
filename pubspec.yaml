@@ -38,6 +38,7 @@ dependencies:
   get_it: ^7.2.0
   http: ^0.13.5
   json_serializable: ^6.5.4
+  flutter_quill: ^6.1.0
 
 dev_dependencies:
   flutter_test:

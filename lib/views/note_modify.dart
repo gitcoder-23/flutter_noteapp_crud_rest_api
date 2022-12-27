@@ -224,7 +224,7 @@ class _NoteModifyState extends State<NoteModify> {
           context: context,
           builder: (_) => AlertDialog(
                 title: const Text(title),
-                content: Text(text),
+                content: const Text(text),
                 actions: <Widget>[
                   ElevatedButton(
                     child: const Text('Ok'),
