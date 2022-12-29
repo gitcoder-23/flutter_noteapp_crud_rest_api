@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_crud_rest_api/services/notes_service.dart';
-import 'package:flutter_crud_rest_api/views/quill_example.dart';
+import 'package:flutter_crud_rest_api/views/note_list.dart';
 import 'package:get_it/get_it.dart';
 
 void setupServiceDiLocator() {
@@ -32,7 +32,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const QuillExample(title: 'Note List'),
+      // home: const QuillExample(title: 'Note List'),
+      home: const NoteList(title: 'Note List'),
     );
   }
 }
